@@ -27,6 +27,10 @@ const App = () => {
       bundle: true,
       write: false,
       plugins: [unpkgPathPlugin()],
+      define: {
+        'process.env.NODE_ENV': '"production"',
+        global: 'window',
+      },
     });
 
     // console.log(result);
@@ -38,7 +42,8 @@ const App = () => {
     <div>
       <textarea
         value={input}
-        onChange={(evt) => setInput(evt.target.value)}></textarea>
+        onChange={(evt) => setInput(evt.target.value)}
+      ></textarea>
       <div>
         <button onClick={onClick}>Submit</button>
       </div>
