@@ -34,10 +34,13 @@ const App = () => {
       },
     });
 
-    // console.log(result);
-
     setCode(result.outputFiles[0].text);
   };
+
+  const html = `
+  <script>
+    ${code}
+  </script>`;
 
   return (
     <div>
@@ -50,6 +53,7 @@ const App = () => {
       </div>
 
       <pre>{code}</pre>
+      <iframe title='sandbox' sandbox='allow-scripts' srcDoc={html} />
     </div>
   );
 };
