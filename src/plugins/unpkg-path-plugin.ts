@@ -6,24 +6,25 @@ const fileCache = localForage.createInstance({
   name: 'filecache',
 });
 
-export const unpkgPathPlugin = () => {
+export const unpkgPathPlugin = (inputCode: string) => {
   return {
     name: 'unpkg-path-plugin',
     setup(build: esbuild.PluginBuild) {
+      //This will handle root entry files of index.js
+      build.onResolve({ filter: /(^index\.js$)/ }, () => {
+        return { path: 'index.js', namespace: 'a' };
+      });
+
+      //This onResolve statement handles relative paths in a module
+      build.onResolve({ filter: /^\.+\// }, (args: any) => {
+        return {
+          namespace: 'a',
+          path: new URL(args.path, `https://unpkg.com${args.resolveDir}/`).href,
+        };
+      });
+
+      //This will find the main file if it is nested or buried inside a package somewhere
       build.onResolve({ filter: /.*/ }, async (args: any) => {
-        console.log('onResolve', args);
-        if (args.path === 'index.js') {
-          return { path: args.path, namespace: 'a' };
-        }
-
-        if (args.path.includes('./') || args.path.includes('../')) {
-          return {
-            namespace: 'a',
-            path: new URL(args.path, `https://unpkg.com${args.resolveDir}/`)
-              .href,
-          };
-        }
-
         return {
           path: `https://unpkg.com/${args.path}`,
           namespace: 'a',
@@ -32,14 +33,10 @@ export const unpkgPathPlugin = () => {
 
       build.onLoad({ filter: /.*/ }, async (args: any) => {
         console.log('onLoad', args);
-
         if (args.path === 'index.js') {
           return {
             loader: 'jsx',
-            contents: `
-              const message = require('react-dom')
-              console.log(message);
-            `,
+            contents: inputCode,
           };
         }
 
