@@ -3,12 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { unpkgPathPlugin } from './plugins/unpkg-path-plugin';
 import { fetchPlugin } from './plugins/fetch-plugin';
+import CodeEditor from './components/code-editor';
 
 const App = () => {
   const ref = useRef<any>();
   const iframe = useRef<any>();
   const [input, setInput] = useState('');
-  const [code, setCode] = useState('');
 
   const startService = async () => {
     ref.current = await esbuild.startService({
@@ -37,7 +37,6 @@ const App = () => {
       },
     });
 
-    // setCode(result.outputFiles[0].text);
     iframe.current.contentWindow.postMessage(result.outputFiles[0].text, '*');
   };
 
@@ -63,6 +62,10 @@ const App = () => {
 
   return (
     <div>
+      <CodeEditor
+        initialValue="const greeting = 'hello world'"
+        onChange={(value) => setInput(value)}
+      />
       <textarea
         value={input}
         onChange={(evt) => setInput(evt.target.value)}
@@ -71,7 +74,6 @@ const App = () => {
         <button onClick={onClick}>Submit</button>
       </div>
 
-      <pre>{code}</pre>
       <iframe
         ref={iframe}
         title='sandbox'
