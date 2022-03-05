@@ -17,6 +17,8 @@
     "axios": "^0.21.1",
     "bulmaswatch": "^0.8.1",
     "esbuild-wasm": "0.8.27",
+    "glob-parent": "^5.1.2",
+    "immer": "^9.0.6",
     "jscodeshift": "0.11.0",
     "localforage": "^1.9.0",
     "monaco-editor": "0.26.1",
